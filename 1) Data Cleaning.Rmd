@@ -1,0 +1,109 @@
+---
+title: "Project 2 MI2"
+author: "Bharathi Thambidurai"
+date: "2025-10-08"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+This file takes in our dataset from the NOAA website and cleans it to prepare for analysis and perform EDA
+
+We need to merge average minimum and maximum temperatures for each month into one dataset, which we will save as AverageTemps.csv. This includes all data from 2000-2024. 
+```{r}
+mintemp <- read.csv("C:\\Users\\gbhar\\OneDrive - University of Virginia\\ds 4002\\mean_min_monthly_temps_2000_2025.csv")
+
+maxtemp <- read.csv("C:\\Users\\gbhar\\OneDrive - University of Virginia\\ds 4002\\mean_max_monthly_temps_2000_2025.csv")
+
+
+
+maxtemp$Max_Value <- maxtemp$Value
+maxtemp$Min_Value <- mintemp$Mean_Min_Temp
+avgtemps <- maxtemp[,-4]
+write.csv(avgtemps, "AverageTemps.csv")
+```
+
+In order to build our models, we need to remove data from 2024 (which we will be forecasting) and 2025 (incomplete data). For the purpose of our analysis, we will treat minimum temperatures and maximum temperatures separately in order to build 2 different models.
+```{r}
+mintemp <- mintemp[mintemp$Year != c(2024,2025), ]
+maxtemp <- maxtemp[maxtemp$Year != c(2024,2025), ]
+```
+
+We need to re-factor our data so that it goes in order of January 2000, February 2000, March 2000, etc. instead of January 2000, January 2001, January 2003, etc. We also need to store the data in a time series object in R.
+```{r}
+# order of months
+month_levels <- c("Jan", "Feb", "Mar", "Apr", "May", "Jun", 
+                  "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")
+
+# min temp reordered and stored as time series
+mintemp$Month <- factor(mintemp$Month, levels = month_levels)
+mintemp_sorted <- mintemp[order(mintemp$Year, mintemp$Month), ]
+
+mintemp_timeseries <- ts(mintemp_sorted$Mean_Min_Temp,frequency=12,start=c(2000,1))
+
+# max temp reordered and stored as time series
+maxtemp$Month <- factor(maxtemp$Month, levels = month_levels)
+maxtemp_sorted <- maxtemp[order(maxtemp$Year, maxtemp$Month), ]
+
+maxtemp_timeseries <- ts(maxtemp_sorted$Value,frequency=12,start=c(2000,1))
+```
+
+For our EDA, we first wanted to take a look at the trend in average minimum and maximum temperatures for two different seasons. We decided to take a look at temperatures for June and for January.
+
+```{r}
+library(ggplot2)
+library(dplyr)
+library(tidyr)
+
+month_choice <- "Jun" # change to Jun or Jan to view graphs
+
+# filter data based on month and select the average min temp and max temp
+min_data <- mintemp %>% 
+  filter(Month == month_choice) %>% 
+  select(Year, Mean_Min_Temp) %>% 
+  rename(Min_Temp = Mean_Min_Temp)
+
+max_data <- maxtemp %>% 
+  filter(Month == month_choice) %>% 
+  select(Year, Value) %>% 
+  rename(Max_Temp = Value)
+
+
+# combine the data so that we can view it in one plot
+combined <- merge(min_data,max_data,by="Year")
+plot_data <- pivot_longer(combined, cols = c(Min_Temp,Max_Temp),names_to = "Type", values_to = "Temperature")
+
+# plot our data
+ggplot(plot_data,aes(x=Year,y=Temperature,color=Type)) +
+  geom_line()+
+  geom_point()+
+  geom_smooth(method="lm",se=F,linetype="dashed",linewidth=0.5)+
+  labs(title = paste("Mean Min and Max Temperatures in", month_choice, "(2000–2025)"),
+    x = "Year",
+    y = "Temperature (°F)",
+    color = "Temperature Type"
+  ) +
+  theme_minimal()
+```
+
+We also wanted to plot the time series for our min and max temperatures. 
+```{r}
+plot.ts(mintemp_timeseries)
+plot.ts(maxtemp_timeseries)
+```
+
+
+Because of the obvious seasonality in our data (weather tends to fluctuate with seasons), we wanted to decompose our time series into the trend component, seasonal component, and irregular component to actually see what the trend is in weather over the last 20 years. 
+```{r}
+maxtemp_decomposed <- decompose(maxtemp_timeseries)
+plot(maxtemp_decomposed)
+plot(maxtemp_timeseries - maxtemp_decomposed$seasonal)
+
+mintemp_decomposed <- decompose(mintemp_timeseries)
+plot(mintemp_decomposed)
+plot(mintemp_timeseries - mintemp_decomposed$seasonal)
+```
+
+
