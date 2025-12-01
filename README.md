@@ -24,7 +24,7 @@ This repository contains everything needed to reproduce the analyses and results
     - `mean_max_monthly_temps_2000_2025.csv` – Just the mean maximum monthly temperature data. 
     - `mean_min_monthly_temps_2000_2025.csv` – Just the mean mimimum monthly temperature data.
   - **Final Data Folder**
-  - `AverageTemps.csv` – Full dataset with months and years, as well as the mean maximum and minimum temperature values used in analysis.  
+    - `AverageTemps.csv` – Full dataset with months and years, as well as the mean maximum and minimum temperature values used in analysis.  
   
  2. **Scripts Folder**
   - `1) Data Cleaning and EDA.Rmd` – Script where data is cleaned and combined into one .csv file, as well as setting up for time series analysis and creating EDA plots
