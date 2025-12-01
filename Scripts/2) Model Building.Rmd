@@ -14,7 +14,7 @@ This file focuses on taking our cleaned dataset and building a time series model
 In MI2, we cleaned our data and stored the average minimum and maximum temperatures as time series objects in R. We also performed basic EDA to view how temperatures have changed over time, looking at specific months and looking at the overall trend. As we plotted our time series data, it was obvious there was a seasonal component we would have to keep in mind as we moved on to building a model.
 
 ```{r}
-# from MI2!!
+# from 1) Data Cleaning and EDA.Rmd
 mintemp <- read.csv("C:\\Users\\gbhar\\OneDrive - University of Virginia\\ds 4002\\mean_min_monthly_temps_2000_2025.csv")
 maxtemp <- read.csv("C:\\Users\\gbhar\\OneDrive - University of Virginia\\ds 4002\\mean_max_monthly_temps_2000_2025.csv")
 
@@ -227,4 +227,5 @@ maxtempforecast2
 By comparing our forecast values of 2024 to our actual values of 2024, we again can see that all the actual data falls in the 95% prediction interval for the forecast. Thus, we meet our goal of being at least 80% accurate with our model.
 
 Using ARIMA models with differencing and a seasonality component allowed us to build accurate models which generated prediction intervals that managed to capture our actual data points.
+
 
