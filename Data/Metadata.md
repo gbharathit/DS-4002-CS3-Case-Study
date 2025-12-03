@@ -35,7 +35,7 @@ We identified January and June to see if there has been a consistent increase in
 
 Again, we see that the general trend for both average minimum and maximum temperatures in June has also been increasing. It is interesting though that the temperatures took a slight dip in June 2024, which is something our model might not account for due to the general increasing trend.
 
-![MaxTimeSeries](https://github.com/gbharathit/DS-4002-Project-2/blob/main/OUTPUT/2juntrends.png?raw=true)
+![MaxTimeSeries](https://github.com/gbharathit/DS-4002-Project-2/blob/main/OUTPUT/3maxtimeseries.png?raw=true)
 
 Removing seasonality allows us to see what the trend is over time for both minimum and maximum temperatures from 2000 to 2023 (second row in both graphs). The trends for average maximum data show an increase in temperatures over the years. Seasonality component is the third row in both graphs, which shows there is a clear and consistent seasonality trend as is expected with weather data. 
 
